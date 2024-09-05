@@ -4,14 +4,15 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import Container from "./components/Container/Container";
 import Home from "./pages/Home/Home";
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <Container>
-      <Home />
-    </Container>
+    <BrowserRouter>
+      <Container>
+        <Home />
+      </Container>
+    </BrowserRouter>
   );
 }
 
