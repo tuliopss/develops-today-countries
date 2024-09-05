@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCountryDto } from './dto/create-country.dto';
-import { UpdateCountryDto } from './dto/update-country.dto';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { IAvailableCountry } from './interfaces/available-country.interface';
@@ -26,13 +25,12 @@ export class CountriesService {
     return response.data;
   }
 
-  async getCountryInfo(createCountry: CreateCountryDto) {
-    const { country, iso2, code } = createCountry;
+  async getCountryInfo(code: string) {
     try {
+      const search = await this.getCountryByCode(code);
       const borders = await this.getBorderCountries(code);
-      const population = await this.getCountryPopulationData(country);
-      console.log('a', population);
-      const flag = await this.getCountryFlag(iso2);
+      const population = await this.getCountryPopulationData(search.name);
+      const flag = await this.getCountryFlag(search.countryCode);
 
       const countryInfo = await Promise.all([borders, population, flag]).then(
         (values) => {
@@ -91,5 +89,13 @@ export class CountriesService {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  async getCountryByCode(code: string) {
+    const countries = await this.getAvailableCountries();
+
+    const country = countries.find((country) => country['countryCode'] == code);
+
+    return country;
   }
 }

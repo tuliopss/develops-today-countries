@@ -1,4 +1,5 @@
 import { apiUrl, requestConfig } from "../../utils/api-request-config.ts";
+import { SearchCountryDto } from "../dtos/search-country.dto.ts";
 import { IAvailableCountry } from "../interfaces/available-country.interface.ts";
 
 const getAvailableCountries = async (): Promise<IAvailableCountry[]> => {
@@ -14,18 +15,18 @@ const getAvailableCountries = async (): Promise<IAvailableCountry[]> => {
   }
 };
 
-// const getProductById = async (id: string): Promise<> => {
-//   const config = requestConfig("GET", null);
+const getCountryInfo = async (code: string) => {
+  const config = requestConfig("GET", null);
 
-//   try {
-//     const res = await fetch(`${apiUrl}/products/${id}`, config);
+  try {
+    const res = await fetch(`${apiUrl}/countries/info/${code}`, config);
 
-//     return await res.json();
-//   } catch (error) {
-//     console.log(error);
-//     return {}
-//   }
-// };
+    return await res.json();
+  } catch (error) {
+    console.log(error);
+    return {};
+  }
+};
 
 // const createProduct = async (data: ): Promise< | undefined> => {
 //   const config = requestConfig("POST", data);
@@ -41,4 +42,5 @@ const getAvailableCountries = async (): Promise<IAvailableCountry[]> => {
 
 export const countriesService = {
   getAvailableCountries,
+  getCountryInfo,
 };

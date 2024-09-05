@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { CountriesService } from './countries.service';
 import { CreateCountryDto } from './dto/create-country.dto';
-import { UpdateCountryDto } from './dto/update-country.dto';
 
 @Controller('countries')
 export class CountriesController {
@@ -25,9 +24,9 @@ export class CountriesController {
     return this.countriesService.getAvailableCountries();
   }
 
-  @Get('/info/')
-  getCountryInfo(@Body() createCountryDto: CreateCountryDto) {
-    return this.countriesService.getCountryInfo(createCountryDto);
+  @Get('/info/:code')
+  getCountryInfo(@Param('code') code: string) {
+    return this.countriesService.getCountryInfo(code);
   }
 
   @Get('/borders/:code')

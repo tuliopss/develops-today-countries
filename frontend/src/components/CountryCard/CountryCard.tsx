@@ -9,11 +9,14 @@ type Props = {
 const CountryCard = ({ country }: Props) => {
   return (
     <div className={styles.countryCard}>
-      <h2>{country.name}</h2>
+      <Link to={"/countryInfo"} state={{ countryCode: country.countryCode }}>
+        <h2>{country.name}</h2>
+      </Link>
+
       <p>{country.countryCode}</p>
 
       <div className={styles.countryCardLink}>
-        <Link to={""}>
+        <Link to={`/countryInfo/${country.countryCode}`}>
           See more <VisibilityIcon />
         </Link>
       </div>

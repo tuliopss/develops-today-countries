@@ -1,0 +1,13 @@
+.countryHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+.countryFlag {
+  height: 10em;
+  width: 10em;
+  margin: 1em;
+}
