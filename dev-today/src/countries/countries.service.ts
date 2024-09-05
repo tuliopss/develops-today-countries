@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCountryDto } from './dto/create-country.dto';
 import { UpdateCountryDto } from './dto/update-country.dto';
 import { HttpService } from '@nestjs/axios';
@@ -23,11 +27,60 @@ export class CountriesService {
   }
 
   async getCountryInfo(countryCode: string) {
+    //BORDER COUNTRIES
     const countryInfoUrl = `https://date.nager.at/api/v3/CountryInfo/${countryCode}`;
 
-    const response = await lastValueFrom(this.httpService.get(countryInfoUrl));
+    try {
+      const countryWithBordersResponse = await lastValueFrom(
+        this.httpService.get(countryInfoUrl),
+      );
 
-    return response.data;
+      return countryWithBordersResponse.data;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async getCountryPopulationData(countryCode: string) {
+    const populationsUrl = `https://countriesnow.space/api/v0.1/countries/population`;
+
+    try {
+      const countriesPopulationResponse = await lastValueFrom(
+        this.httpService.get(populationsUrl),
+      );
+
+      const countryPopulation = countriesPopulationResponse.data.data.filter(
+        (country) => {
+          return country['code'] == countryCode;
+        },
+      );
+
+      if (countryPopulation.length == 0) {
+        throw new NotFoundException(`Country code not founded`);
+      }
+
+      return countryPopulation;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async getCountryFlag(countryCode: string) {
+    const flagImageUrl =
+      'https://countriesnow.space/api/v0.1/countries/flag/images';
+
+    try {
+      const countryFlagResponse = await lastValueFrom(
+        this.httpService.get(flagImageUrl),
+      );
+
+      const countryFlag = countryFlagResponse.data.data.filter((country) => {
+        return country['iso2'] == countryCode;
+      });
+      return countryFlag[0].flag;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   update(id: number, updateCountryDto: UpdateCountryDto) {

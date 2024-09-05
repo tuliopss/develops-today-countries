@@ -25,9 +25,18 @@ export class CountriesController {
     return this.countriesService.getAvailableCountries();
   }
 
-  @Get(':id')
-  getCountryInfo(@Param('id') id: string) {
-    return this.countriesService.getCountryInfo(id);
+  @Get('/countryInfo/:code')
+  getCountryInfo(@Param('code') countryCode: string) {
+    return this.countriesService.getCountryInfo(countryCode);
+  }
+  @Get('/population/:code')
+  getPopulations(@Param('code') countryCode: string) {
+    return this.countriesService.getCountryPopulationData(countryCode);
+  }
+
+  @Get('/flag/:code')
+  getFlag(@Param('code') countryCode: string) {
+    return this.countriesService.getCountryFlag(countryCode);
   }
 
   @Patch(':id')
