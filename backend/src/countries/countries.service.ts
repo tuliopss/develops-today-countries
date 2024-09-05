@@ -26,68 +26,70 @@ export class CountriesService {
     return response.data;
   }
 
-  async getCountryInfo(countryCode: string) {
-    //BORDER COUNTRIES
+  async getCountryInfo(createCountry: CreateCountryDto) {
+    const { country, iso2, code } = createCountry;
+    try {
+      const borders = await this.getBorderCountries(code);
+      const population = await this.getCountryPopulationData(country);
+      console.log('a', population);
+      const flag = await this.getCountryFlag(iso2);
+
+      const countryInfo = await Promise.all([borders, population, flag]).then(
+        (values) => {
+          return { borders, population, flag };
+        },
+      );
+
+      return countryInfo;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async getBorderCountries(countryCode: string) {
     const countryInfoUrl = `https://date.nager.at/api/v3/CountryInfo/${countryCode}`;
 
     try {
       const countryWithBordersResponse = await lastValueFrom(
         this.httpService.get(countryInfoUrl),
       );
-
+      if (!countryWithBordersResponse) {
+        throw new BadRequestException('oiipb');
+      }
       return countryWithBordersResponse.data;
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
 
-  async getCountryPopulationData(countryCode: string) {
+  async getCountryPopulationData(country: string) {
     const populationsUrl = `https://countriesnow.space/api/v0.1/countries/population`;
 
     try {
+      const body = { country };
       const countriesPopulationResponse = await lastValueFrom(
-        this.httpService.get(populationsUrl),
+        this.httpService.post(populationsUrl, body),
       );
 
-      const countryPopulation = countriesPopulationResponse.data.data.filter(
-        (country) => {
-          return country['code'] == countryCode;
-        },
-      );
-
-      if (countryPopulation.length == 0) {
-        throw new NotFoundException(`Country code not founded`);
-      }
-
-      return countryPopulation;
+      return countriesPopulationResponse.data.data;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  async getCountryFlag(countryCode: string) {
+  async getCountryFlag(iso2: string) {
     const flagImageUrl =
       'https://countriesnow.space/api/v0.1/countries/flag/images';
 
     try {
+      const body = { iso2 }; // Enviar o ISO2 como um objeto
       const countryFlagResponse = await lastValueFrom(
-        this.httpService.get(flagImageUrl),
+        this.httpService.post(flagImageUrl, body),
       );
 
-      const countryFlag = countryFlagResponse.data.data.filter((country) => {
-        return country['iso2'] == countryCode;
-      });
-      return countryFlag[0].flag;
+      return countryFlagResponse.data.data.flag;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(error.message);
     }
-  }
-
-  update(id: number, updateCountryDto: UpdateCountryDto) {
-    return `This action updates a #${id} country`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} country`;
   }
 }
