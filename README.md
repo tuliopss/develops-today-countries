@@ -15,6 +15,7 @@ Now to run frontend, navigate to frontend directory and run with:
 **npm run dev**
 
 Endpoints:
+
 [baseUrl]/countries/ --> return all available countries
 
 [baseUrl]/countries/info/:code --> return a especific country with your name, flag, list of countries that border with this country, and a population chart
