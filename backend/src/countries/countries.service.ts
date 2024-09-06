@@ -3,18 +3,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateCountryDto } from './dto/create-country.dto';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
-import { IAvailableCountry } from './interfaces/available-country.interface';
 @Injectable()
 export class CountriesService {
   constructor(private readonly httpService: HttpService) {}
-  create(createCountryDto: CreateCountryDto) {
-    return 'This action adds a new country';
-  }
 
-  async getAvailableCountries(): Promise<IAvailableCountry[]> {
+  async getAvailableCountries() {
     const availableCountriesUrl =
       'https://date.nager.at/api/v3/AvailableCountries';
 
@@ -27,7 +22,7 @@ export class CountriesService {
 
   async getCountryInfo(code: string) {
     try {
-      const countrySearched = await this.getCountryByCodeOrName(code);
+      const countrySearched = await this.getCountryByCode(code);
       const borders = await this.getBorderCountries(code);
       const population = await this.getCountryPopulationData(
         countrySearched.name,
@@ -95,10 +90,6 @@ export class CountriesService {
         this.httpService.post(flagImageUrl, body),
       );
 
-      if (!countryFlagResponse) {
-        return 'oi';
-      }
-
       return countryFlagResponse.data.data.flag;
     } catch (error) {
       if (error) {
@@ -107,7 +98,7 @@ export class CountriesService {
     }
   }
 
-  async getCountryByCodeOrName(code?: string, name?: string) {
+  async getCountryByCode(code?: string, name?: string) {
     try {
       const countries = await this.getAvailableCountries();
 
@@ -121,7 +112,9 @@ export class CountriesService {
 
       return country;
     } catch (error) {
-      console.log('Get country');
+      if (error) {
+        return { country: 'Country not founded' };
+      }
       throw new BadRequestException(error.message, 'Get country');
     }
   }

@@ -24,8 +24,6 @@ const CountryInfo = (props: Props) => {
   const [countryInfo, setCountryInfo] = useState<ICountry>(initalCountry);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // const [countryInfo, setCountryInfo] = useState();
-
   const fetchCountryInfo = async (countryCode: string) => {
     try {
       const country = await countriesService.getCountryInfo(countryCode);
@@ -41,8 +39,6 @@ const CountryInfo = (props: Props) => {
       fetchCountryInfo(countryCode);
     }
   }, [countryCode]);
-
-  console.log(countryInfo);
 
   return (
     <>
@@ -75,13 +71,6 @@ const CountryInfo = (props: Props) => {
               ) : (
                 <p>This country doesn't have borders</p>
               )}
-              {/* {countryInfo.borders.map((country: ICountry) => (
-                <li key={country.countryCode}>
-                  <Link to={`/countryInfo/${country.countryCode}`}>
-                    {country.commonName} <VisibilityIcon />
-                  </Link>
-                </li>
-              ))} */}
             </ul>
           </div>
 

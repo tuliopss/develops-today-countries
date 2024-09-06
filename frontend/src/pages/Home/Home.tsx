@@ -10,6 +10,7 @@ const Home = (props: Props) => {
   const [availableCountries, setAvailableCountries] = useState<
     IAvailableCountry[]
   >([]);
+  const [query, setQuery] = useState<String>("");
 
   const fetchCountriesAvailables = async () => {
     const countries = await countriesService.getAvailableCountries();
@@ -17,16 +18,29 @@ const Home = (props: Props) => {
     setAvailableCountries(countries);
   };
 
+  const filteredCountries = query
+    ? availableCountries.filter((country) => {
+        return country.name.toLowerCase().includes(query.toLowerCase());
+      })
+    : availableCountries;
   useEffect(() => {
     fetchCountriesAvailables();
   }, []);
 
   return (
     <>
+      <div className={styles.searchContainer}>
+        <input
+          type='search'
+          placeholder='Search country...'
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
       <h1>Available Countries: </h1>
+
       <div className={styles.countriesList}>
-        {availableCountries.length > 0 ? (
-          availableCountries.map((country) => (
+        {filteredCountries.length > 0 ? (
+          filteredCountries.map((country) => (
             <CountryCard key={country.countryCode} country={country} />
           ))
         ) : (
