@@ -32,16 +32,15 @@ export class CountriesService {
       const population = await this.getCountryPopulationData(
         countrySearched.name,
       );
-      console.log(countrySearched);
       const flag = await this.getCountryFlag(countrySearched.countryCode);
 
       const countryInfo = await Promise.all([borders, population, flag]).then(
-        () => {
+        ([bordersData, populationData, flagData]) => {
           return {
             countryName: countrySearched.name,
-            borders: borders,
-            population,
-            flag,
+            borders: bordersData,
+            population: populationData,
+            flag: flagData,
           };
         },
       );
@@ -62,7 +61,8 @@ export class CountriesService {
 
       return countryWithBordersResponse.data.borders;
     } catch (error) {
-      throw new BadRequestException(error);
+      console.log('Get borders');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -71,15 +71,16 @@ export class CountriesService {
 
     try {
       // await this.getCountryByCodeOrName(country);
-
       const body = { country };
+
       const countriesPopulationResponse = await lastValueFrom(
         this.httpService.post(populationsUrl, body),
       );
 
       return countriesPopulationResponse.data.data.populationCounts;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      console.log('Get population');
+      throw new BadRequestException(error.message, 'Get population');
     }
   }
 
@@ -88,15 +89,21 @@ export class CountriesService {
       'https://countriesnow.space/api/v0.1/countries/flag/images';
 
     try {
-      await this.getCountryByCodeOrName(iso2);
       const body = { iso2 }; // Enviar o ISO2 como um objeto
+
       const countryFlagResponse = await lastValueFrom(
         this.httpService.post(flagImageUrl, body),
       );
 
+      if (!countryFlagResponse) {
+        return 'oi';
+      }
+
       return countryFlagResponse.data.data.flag;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      if (error) {
+        return { flagData: 'No flag founded' };
+      }
     }
   }
 
@@ -114,7 +121,8 @@ export class CountriesService {
 
       return country;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      console.log('Get country');
+      throw new BadRequestException(error.message, 'Get country');
     }
   }
 }

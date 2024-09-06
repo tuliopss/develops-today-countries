@@ -42,6 +42,8 @@ const CountryInfo = (props: Props) => {
     }
   }, [countryCode]);
 
+  console.log(countryInfo);
+
   return (
     <>
       {countryInfo ? (
@@ -50,7 +52,11 @@ const CountryInfo = (props: Props) => {
             <h2>{countryInfo.countryName}</h2>
             <img
               className={styles.countryFlag}
-              src={`${countryInfo.flag}`}
+              src={
+                countryInfo.flag !== "Flag not founded"
+                  ? countryInfo.flag
+                  : "NO FLAG"
+              } // Substitua "default-flag-url" por uma URL de imagem padrão
               alt={`${countryInfo.countryName}'s flag`}
             />
           </div>
