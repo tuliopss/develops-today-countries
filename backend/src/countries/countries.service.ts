@@ -27,11 +27,12 @@ export class CountriesService {
 
   async getCountryInfo(code: string) {
     try {
-      const countrySearched = await this.getCountryByCode(code);
+      const countrySearched = await this.getCountryByCodeOrName(code);
       const borders = await this.getBorderCountries(code);
       const population = await this.getCountryPopulationData(
         countrySearched.name,
       );
+      console.log(countrySearched);
       const flag = await this.getCountryFlag(countrySearched.countryCode);
 
       const countryInfo = await Promise.all([borders, population, flag]).then(
@@ -58,10 +59,8 @@ export class CountriesService {
       const countryWithBordersResponse = await lastValueFrom(
         this.httpService.get(countryInfoUrl),
       );
-      if (!countryWithBordersResponse) {
-        throw new BadRequestException('oiipb');
-      }
-      return countryWithBordersResponse.data;
+
+      return countryWithBordersResponse.data.borders;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -71,12 +70,14 @@ export class CountriesService {
     const populationsUrl = `https://countriesnow.space/api/v0.1/countries/population`;
 
     try {
+      // await this.getCountryByCodeOrName(country);
+
       const body = { country };
       const countriesPopulationResponse = await lastValueFrom(
         this.httpService.post(populationsUrl, body),
       );
 
-      return countriesPopulationResponse.data.data;
+      return countriesPopulationResponse.data.data.populationCounts;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -87,6 +88,7 @@ export class CountriesService {
       'https://countriesnow.space/api/v0.1/countries/flag/images';
 
     try {
+      await this.getCountryByCodeOrName(iso2);
       const body = { iso2 }; // Enviar o ISO2 como um objeto
       const countryFlagResponse = await lastValueFrom(
         this.httpService.post(flagImageUrl, body),
@@ -98,11 +100,21 @@ export class CountriesService {
     }
   }
 
-  async getCountryByCode(code: string) {
-    const countries = await this.getAvailableCountries();
+  async getCountryByCodeOrName(code?: string, name?: string) {
+    try {
+      const countries = await this.getAvailableCountries();
 
-    const country = countries.find((country) => country['countryCode'] == code);
+      const country = countries.find(
+        (country) => country['countryCode'] == code,
+      );
 
-    return country;
+      if (!country) {
+        throw new NotFoundException(`Country ${code} not founded`);
+      }
+
+      return country;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

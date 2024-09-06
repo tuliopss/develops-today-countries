@@ -1,32 +1,47 @@
 import { useEffect, useState } from "react";
 import { countriesService } from "../../services/country-service";
-import { useParams } from "react-router-dom";
+import { Link, redirect, useParams } from "react-router-dom";
 import styles from "./CountryInfo.module.css";
 import { ICountry } from "../../interfaces/country.interface";
 import PopulationChart from "../../components/PopulationChart/PopulationChart";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 type Props = {};
 
 const CountryInfo = (props: Props) => {
+  const { countryCode = "" } = useParams();
+
   const initalCountry: ICountry = {
+    countryName: "",
     commonName: "",
     countryCode: "",
     officialName: "",
     region: "",
     flag: "",
     borders: [],
+    population: [{}],
   };
-  const [countryInfo, setCountryInfo] = useState();
-  const { countryCode = "" } = useParams();
+  const [countryInfo, setCountryInfo] = useState<ICountry>(initalCountry);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // const [countryInfo, setCountryInfo] = useState();
 
   const fetchCountryInfo = async (countryCode: string) => {
-    const countryid = await countriesService.getCountryInfo(countryCode);
-    setCountryInfo(countryid);
+    try {
+      const country = await countriesService.getCountryInfo(countryCode);
+      setCountryInfo(country);
+      return country;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
-    fetchCountryInfo(countryCode);
-  }, []);
+    if (countryCode) {
+      fetchCountryInfo(countryCode);
+    }
+  }, [countryCode]);
+
   return (
     <>
       {countryInfo ? (
@@ -41,11 +56,26 @@ const CountryInfo = (props: Props) => {
           </div>
 
           <div className={styles.countryBordersList}>
-            <h3>Countries that border with {countryInfo.countryName}</h3>
+            <h3>Countries that border with {countryInfo.countryName}: </h3>
             <ul>
-              {countryInfo.borders.borders.map((country) => (
-                <li key={country.countryCode}>{country.commonName}</li>
-              ))}
+              {countryInfo.borders.length > 0 ? (
+                countryInfo.borders.map((country: ICountry) => (
+                  <li key={country.countryCode}>
+                    <Link to={`/countryInfo/${country.countryCode}`}>
+                      {country.commonName} <VisibilityIcon />
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <p>This country doesn't have borders</p>
+              )}
+              {/* {countryInfo.borders.map((country: ICountry) => (
+                <li key={country.countryCode}>
+                  <Link to={`/countryInfo/${country.countryCode}`}>
+                    {country.commonName} <VisibilityIcon />
+                  </Link>
+                </li>
+              ))} */}
             </ul>
           </div>
 

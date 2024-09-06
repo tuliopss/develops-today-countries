@@ -1,13 +1,52 @@
+.countryInfoContainer {
+  display: flex;
+  /* flex-direction: column; */
+}
+
 .countryHeader {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   margin: 0 auto;
   max-width: 400px;
 }
 
 .countryFlag {
-  height: 5.5em;
-  width: 10em;
+  height: 5em;
+  width: 8em;
   margin: 1em;
+}
+
+.countryBordersList {
+  margin: 0 auto;
+  margin-bottom: 1em;
+  width: 80%;
+  border: 1px solid #000;
+  background-color: #391313;
+  box-shadow: none;
+
+  /* padding: 6px 12px; */
+  border: 1px solid none;
+
+  background-color: #34475b;
+  /* border-color: #0063cc; */
+}
+.countryBordersList a {
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+}
+.countryBordersList ul li {
+  width: 100%;
+
+  /* align-items: center;
+  display: flex;
+  justify-content: center; */
+}
+.countryBordersList a:hover {
+  color: #5f28b3;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
 }

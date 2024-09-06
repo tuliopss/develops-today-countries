@@ -9,7 +9,7 @@ type Props = {
 const CountryCard = ({ country }: Props) => {
   return (
     <div className={styles.countryCard}>
-      <Link to={"/countryInfo"} state={{ countryCode: country.countryCode }}>
+      <Link to={`/countryInfo/${country.countryCode}`}>
         <h2>{country.name}</h2>
       </Link>
 

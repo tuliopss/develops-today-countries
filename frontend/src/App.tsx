@@ -6,10 +6,12 @@ import Container from "./components/Container/Container";
 import Home from "./pages/Home/Home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CountryInfo from "./pages/CountryInfo/CountryInfo";
+import Navbar from "./components/Navbar/Navbar";
 
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <Container>
         <Routes>
           <Route path='/' element={<Home />} />
