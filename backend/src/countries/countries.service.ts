@@ -27,14 +27,21 @@ export class CountriesService {
 
   async getCountryInfo(code: string) {
     try {
-      const search = await this.getCountryByCode(code);
+      const countrySearched = await this.getCountryByCode(code);
       const borders = await this.getBorderCountries(code);
-      const population = await this.getCountryPopulationData(search.name);
-      const flag = await this.getCountryFlag(search.countryCode);
+      const population = await this.getCountryPopulationData(
+        countrySearched.name,
+      );
+      const flag = await this.getCountryFlag(countrySearched.countryCode);
 
       const countryInfo = await Promise.all([borders, population, flag]).then(
-        (values) => {
-          return { borders, population, flag };
+        () => {
+          return {
+            countryName: countrySearched.name,
+            borders: borders,
+            population,
+            flag,
+          };
         },
       );
 
