@@ -16,6 +16,7 @@ Now to run frontend, navigate to frontend directory and run with:
 
 Endpoints:
 [baseUrl]/countries/ --> return all available countries
+
 [baseUrl]/countries/info/:code --> return a especific country with your name, flag, list of countries that border with this country, and a population chart
 
 Backend will run on port 3000 and Frontend on 5173 for default.
