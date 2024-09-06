@@ -46,7 +46,4 @@
 }
 .countryBordersList a:hover {
   color: #5f28b3;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
 }

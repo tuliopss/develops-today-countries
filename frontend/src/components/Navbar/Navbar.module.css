@@ -25,3 +25,6 @@
   text-decoration: none;
   color: #fff;
 }
+#navBar a:hover {
+  color: #5f28b3;
+}
